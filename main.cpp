@@ -61,7 +61,6 @@ bool safe_inp(int* x, int err = -1) {
         return true;
     }
 }
-
 void eukldel(int a, int b) {
     int t = 0;
     if (a < b) {
@@ -76,185 +75,136 @@ void eukldel(int a, int b) {
     }
     std::wcout << a << std::endl;
 }
-
 void eukldvch(int a, int b) {
     int t = 0;
     while (b != 0 and a != 0) {
         if (a > b) {
             t = a - b;
             a = t;
-        } else {
+        }
+        else {
             t = b - a;
             b = t;
         }
     }
     if (a == 0) {
         std::wcout << b << std::endl;;
-    } else {
+    }
+    else {
         std::wcout << a << std::endl;;
     }
 }
-
 void resheto(int a) {
-    a = a - 1;
     std::wstring arr = L"";
     for (int i = 0; i < a; i++) {
         arr += L'1';
     }
-    for (int i = 0; i < a - 1; i++) {
+    for (int i = 2; i < a - 1; i++) {
         if (arr[i] == '0') {
             continue;
-        } else {
-            for (int j = i + 1; j < a; j++) {
-                if (arr[j] != '0' and ((j + 2) % (i + 2)) == 0) {
-                    arr[j] = '0';
-                }
+        }
+        else {
+            for (int j = i + i; j < a; j+=i) {
+                arr[j] = '0';
             }
         }
     }
-    for (int i = 0; i < a; i++) {
+    for (int i = 2; i < a; i++) {
         if (arr[i] == '1') {
-            std::wcout << i + 2 << std::endl;
+            std::wcout << i << std::endl;
         }
     }
 }
-bool find(char a) {
-    a = tolower(a);
-    std::wstring s = L"aeiouy";
-    for (wchar_t sym : s) {
-        if (sym == a) {
-            return true;
-        }
-    }
-    return false;
-}
-int slgcnt(std::string s) {
-    int i = 0;
-    for (char a: s) {
-        i += find(a);
-    }
-}
-std::string prep(std::string si){
-    char i;
-    std::string so = "";
-    for (char a: si){
-        a = tolower(a);
-        if (a == ' '){
-            if (i < 0){
-                continue;
-            }else{
-                if (i == ' '){
-                    continue;
-                }else{
-                    so += a;
-                    i = a;
-                }
-            }
-        }else{
-            if (int(a) >= 97 and int(a) <= 122){
-                so += a;
-                i = a;
-            }
-        }
-    }
-    return so;
-}
-std::string split(std::string si){
-    std::string so = "";
-    char prev = 0;
-    int slg = slgcnt(si);
-    bool glas = false;
-    if (slg > 1){
-        for (int i = 0; i < si.length(); i++) {
-            if (int(prev) == 0){
-                so += si[i];
-                prev = si[i];
-                if (find(si[i])){
-                    glas = true;
-                }
-            }else if (slg <= 1){
-                so += si[i];
-                prev = si[i];
-            }else{
-                if (glas){
-                    if (find(si[i])){
-                        if (si[i] == prev){
-                            so += si[i];
-                            prev = si[i];
-                        } else{
-                            so += si[i]+'-';
-                            prev = 0;
-                        }
-                        slg -= 1;
-                    }
-                }else{
-                    so += si[i];
-                    prev = si[i];
-                }
-            }
-        }
-    }
-    std::cout << so << std::endl;
-    return so;
-}
-void slogs() {
+void acii() {
     std::ifstream in;
     std::ofstream out;
-    in.open("words.txt");
-    out.open("wordsaout.txt");
-    std::string all;
-    std::string allout;
+    in.open("toas.txt");
+    out.open("outas.txt");
     std::string t;
     if (!in.is_open() or !out.is_open()) {
         std::cout << "Один из файлов не существует" << std::endl;
-    } else{
+    }
+    else {
         while (getline(in, t)) {
-            all += t + ' ';
-        }
-        all = prep(all);
-        t = "";
-        for (char a: all){
-            if (a == ' '){
-                if (!t.empty()){
-                    allout += split(t) + " ";
-                    t = "";
-                }
-            }else{
-                t += a;
+            for (char a : t) {
+                out << int(a) << "\n";
             }
         }
-        out << allout;
     }
+    in.close();
+    out.close();
 }
-
+char findnr(char a, int mv) {
+    a = tolower(a);
+    std::string eng = "abcdefghijklmnopqrstuvwxyz";
+    for (int i = 0; i < eng.length(); i++) {
+        if (eng[i] == a) {
+            return eng[(i + mv) % (eng.length())];
+        }
+    }
+    return a;
+}
+std::string move(std::string s, int mv) {
+    for (int i = 0; i < s.length(); i++) {
+        if (s[i] == tolower(s[i])) {
+            s[i] = findnr(s[i], mv);
+        }
+        else {
+            s[i] = toupper(findnr(tolower(s[i]), mv));
+        }
+    }
+    return s;
+}
+void cyph(int i) {
+    std::ifstream in;
+    std::ofstream out;
+    in.open("tocy.txt");
+    out.open("outcy.txt");
+    std::string t;
+    if (!in.is_open() or !out.is_open()) {
+        std::cout << "Один из файлов не существует" << std::endl;
+    }
+    else {
+        while (getline(in, t)) {
+            out << move(t, i) << "\n";
+        }
+    }
+    in.close();
+    out.close();
+}
 int main() {
     setlocale(0, "");
-    int a = 0,b = 0;
-    int* ab[] = {&a, &b};
-    while (true){
+    int a = 0, b = 0;
+    int* ab[] = { &a, &b };
+    while (true) {
         std::cout << "Введите номер задания" << std::endl;
-        safe_inp(&a,-1);
+        safe_inp(&a, -1);
         switch (a) {
             case 1:
-                if(safe_inp(ab, 2, -1)){
+                if (safe_inp(ab, 2, -1)) {
                     eukldel(abs(a), abs(b));
                     eukldvch(abs(a), abs(b));
-                } else{
+                }
+                else {
                     std::cout << "Неверный ввод" << std::endl;
                 }
                 break;
             case 2:
                 std::cout << "Введите число, входящее в интервал (2,100000)" << std::endl;
-                if (safe_inp(&a,-1) and a > 2 and a < 100000){
+                if (safe_inp(&a, -1) and a > 2 and a < 100000) {
                     resheto(a);
-                } else{
+                }
+                else {
                     std::cout << "Неверный ввод" << std::endl;
                 }
                 break;
             case 3:
+                acii();
                 break;
             case 4:
-                slogs();
+                if (safe_inp(&a, -1)) {
+                    cyph(a);
+                }
                 break;
             case 5:
                 break;
@@ -267,4 +217,3 @@ int main() {
         }
     }
 }
-
