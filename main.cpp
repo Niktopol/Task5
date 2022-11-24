@@ -2,6 +2,9 @@
 #include <string>
 #include <limits>
 #include <fstream>
+#include <vector>
+#include <cmath>
+#include <algorithm>
 
 bool safe_inp(double* arr[], int len, double err) {
     double n;
@@ -104,7 +107,7 @@ void resheto(int a) {
             continue;
         }
         else {
-            for (int j = i + i; j < a; j+=i) {
+            for (int j = i + i; j < a; j += i) {
                 arr[j] = '0';
             }
         }
@@ -172,10 +175,104 @@ void cyph(int i) {
     in.close();
     out.close();
 }
+int fact(int a) {
+    int n = 1;
+    for (int i = 1; i <= a; i++) {
+        n *= i;
+    }
+    return n;
+}
+double smsin(int n) {
+    double sm = 0;
+    for (int i = 1; i <= n; i++) {
+        sm += sin(10 + 2 * i);
+    }
+    return pow(sm, n);
+}
+double r10(int n) {
+    double sm = 0;
+    for (int i = 0; i < n; i++) {
+        sm += fact(n - i) / smsin(i+1);
+    }
+    return sm;
+}
+double r60(int n) {
+    std::cout << "Введите " << n << " чисел" << std::endl;
+    std::cout << "Неверно введённые числа будут заменены на 1" << std::endl;
+    int a = 0;
+    double x = 1;
+    double y = 1;
+    double z = 1;
+    for (int i = 0; i < 3 * n; i++) {
+        safe_inp(&a, 1);
+        if (i < n) {
+            x *= a;
+        }
+        else if (i >= n and i < 2 * n) {
+            x *= a;
+        }
+        else if (i >= 2 * n) {
+            x *= a;
+        }
+    }
+    return (x * x) + (y * y) + (z * z);
+}
+int tonum(std::string s) {
+    std::string alph = "0123456789";
+    std::string sm = "";
+    bool ex = false;
+    for (char t : s) {
+        for (int i = 0; i < 10; i++) {
+            if (t == alph[i]) {
+                ex = true;
+                sm = sm + t;
+            }
+        }
+    }
+    if (ex) {
+        return stoi(sm);
+    }
+    return -1;
+}
+void fl9() {
+    std::ifstream in;
+    std::ofstream out;
+    std::string t;
+    int rem = 2000000;
+    int n;
+    in.open("A.txt");
+    std::vector <int> arr;
+    while (getline(in, t) and (rem > 0)) {
+        n = tonum(t);
+        if (n >= 0) {
+            arr.push_back(n);
+            n -= 1;
+        }
+         
+    }
+    in.close();
+    in.open("B.txt");
+    while (getline(in, t) and (rem > 0)) {
+        n = tonum(t);
+        if (n >= 0) {
+            arr.push_back(n);
+            n -= 1;
+        }
+    }
+    in.close();
+    out.open("C.txt");
+    sort(arr.begin(), arr.end());
+    for (int i = 0; i < arr.size(); i++) {
+        out << arr.at(i) << "\n";
+    }
+    out.close();
+}
 int main() {
     setlocale(0, "");
     int a = 0, b = 0;
     int* ab[] = { &a, &b };
+    double c = 0, d = 0;
+    double* cd[] = { &c, &d };
     while (true) {
         std::cout << "Введите номер задания" << std::endl;
         safe_inp(&a, -1);
@@ -202,15 +299,27 @@ int main() {
                 acii();
                 break;
             case 4:
+                std::cout << "Введите сдвиг по алфавиту" << std::endl;
                 if (safe_inp(&a, -1)) {
                     cyph(a);
                 }
                 break;
             case 5:
+                std::cout << "Введите n" << std::endl;
+                safe_inp(&a, -1);
+                if (a > 0) {
+                    std::cout << r10(a) << std::endl;
+                }
                 break;
             case 6:
+                std::cout << "Введите n" << std::endl;
+                safe_inp(&a, -1);
+                if (a > 0) {
+                    std::cout << r60(a) << std::endl;
+                }
                 break;
             case 7:
+                fl9();
                 break;
             default:
                 std::cout << "Неверный ввод" << std::endl;
